@@ -3,6 +3,663 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Police Bharti MCQ Test</title>
+
+<style>
+*{box-sizing:border-box}
+
+body{
+margin:0;
+font-family:Arial,sans-serif;
+background:#eef2f7;
+color:#222
+}
+
+header{
+background:#123c69;
+color:white;
+padding:22px 15px;
+text-align:center
+}
+
+header h1{
+margin:0;
+font-size:25px
+}
+
+header p{
+margin:8px 0 0
+}
+
+.container{
+max-width:650px;
+margin:auto;
+padding:15px
+}
+
+.card{
+background:white;
+border-radius:15px;
+padding:20px;
+margin-top:15px;
+box-shadow:0 4px 15px rgba(0,0,0,.1)
+}
+
+select,button{
+width:100%;
+padding:14px;
+border-radius:10px;
+font-size:16px
+}
+
+select{
+border:2px solid #ddd;
+margin:10px 0
+}
+
+button{
+border:none;
+background:#123c69;
+color:white;
+margin-top:10px;
+cursor:pointer
+}
+
+.timer{
+background:#ffe8e8;
+color:#c00;
+padding:10px;
+border-radius:10px;
+text-align:center;
+font-size:18px;
+font-weight:bold;
+margin-bottom:15px
+}
+
+.progress{
+display:flex;
+justify-content:space-between;
+margin-bottom:15px;
+font-weight:bold
+}
+
+.question{
+font-size:19px;
+font-weight:bold;
+line-height:1.5;
+margin-bottom:15px
+}
+
+.option{
+background:white;
+color:#222;
+border:2px solid #ddd;
+text-align:left
+}
+
+.option:hover{
+background:#f0f6ff
+}
+
+.correct{
+background:#c9f7c5!important;
+border-color:green!important
+}
+
+.wrong{
+background:#ffd0d0!important;
+border-color:red!important
+}
+
+.hidden{
+display:none
+}
+
+.result{
+text-align:center
+}
+
+.score{
+font-size:42px;
+font-weight:bold;
+color:#123c69
+}
+
+.stat{
+padding:12px;
+margin:7px 0;
+background:#f3f5f8;
+border-radius:8px
+}
+</style>
+</head>
+
+<body>
+
+<header>
+<h1>🚔 Police Bharti MCQ Test</h1>
+<p>सराव करा • टेस्ट द्या • तुमचा Score पहा</p>
+</header>
+
+<div class="container">
+
+<div class="card" id="startScreen">
+
+<h2>📚 टेस्ट सुरू करा</h2>
+
+<p>विषय निवडा:</p>
+
+<select id="subject">
+<option value="all">सर्व विषय</option>
+<option value="gk">सामान्य ज्ञान</option>
+<option value="math">गणित</option>
+<option value="marathi">मराठी</option>
+<option value="history">इतिहास</option>
+</select>
+
+<p>⏱️ वेळ: 10 मिनिटे</p>
+<p>📝 प्रश्न: 20</p>
+
+<button onclick="startTest()">▶️ टेस्ट सुरू करा</button>
+
+</div>
+
+<div class="card hidden" id="quizScreen">
+
+<div class="timer">
+⏱️ वेळ: <span id="timer">10:00</span>
+</div>
+
+<div class="progress">
+<span id="questionNumber"></span>
+<span id="liveScore">गुण: 0</span>
+</div>
+
+<div class="question" id="question"></div>
+
+<div id="options"></div>
+
+<button id="nextBtn" onclick="nextQuestion()" disabled>
+पुढील प्रश्न →
+</button>
+
+</div>
+
+<div class="card result hidden" id="resultScreen">
+
+<h2>🎉 टेस्ट पूर्ण झाली!</h2>
+
+<p>तुमचा Score</p>
+
+<div class="score" id="finalScore"></div>
+
+<div class="stat">
+एकूण प्रश्न: <b id="totalQuestions"></b>
+</div>
+
+<div class="stat">
+बरोबर उत्तरे: <b id="correctAnswers"></b>
+</div>
+
+<div class="stat">
+चुकीची उत्तरे: <b id="wrongAnswers"></b>
+</div>
+
+<div class="stat">
+टक्केवारी: <b id="percentage"></b>
+</div>
+
+<p id="resultMessage"></p>
+
+<button onclick="restartTest()">
+🔄 पुन्हा टेस्ट द्या
+</button>
+
+</div>
+
+</div>
+
+<script>
+
+const questions=[
+
+{
+q:"महाराष्ट्राची राजधानी कोणती?",
+o:["पुणे","मुंबई","नाशिक","नागपूर"],
+a:1,s:"gk"
+},
+
+{
+q:"भारताची राजधानी कोणती?",
+o:["मुंबई","नवी दिल्ली","पुणे","कोलकाता"],
+a:1,s:"gk"
+},
+
+{
+q:"भारताचा राष्ट्रीय प्राणी कोणता?",
+o:["सिंह","वाघ","हत्ती","चित्ता"],
+a:1,s:"gk"
+},
+
+{
+q:"भारताचा राष्ट्रीय पक्षी कोणता?",
+o:["गरुड","मोर","पोपट","कावळा"],
+a:1,s:"gk"
+},
+
+{
+q:"भारताचे राष्ट्रीय फूल कोणते?",
+o:["गुलाब","कमळ","जाई","चाफा"],
+a:1,s:"gk"
+},
+
+{
+q:"भारताचे चलन कोणते?",
+o:["डॉलर","रुपया","युरो","पाउंड"],
+a:1,s:"gk"
+},
+
+{
+q:"महाराष्ट्र दिन कधी साजरा केला जातो?",
+o:["1 मे","15 ऑगस्ट","26 जानेवारी","2 ऑक्टोबर"],
+a:0,s:"gk"
+},
+
+{
+q:"भारताचा स्वातंत्र्यदिन कधी असतो?",
+o:["26 जानेवारी","15 ऑगस्ट","1 मे","2 ऑक्टोबर"],
+a:1,s:"gk"
+},
+
+{
+q:"भारताचा प्रजासत्ताक दिन कधी असतो?",
+o:["15 ऑगस्ट","26 जानेवारी","1 मे","2 ऑक्टोबर"],
+a:1,s:"gk"
+},
+
+{
+q:"एका दिवसात किती तास असतात?",
+o:["12","18","24","48"],
+a:2,s:"gk"
+},
+
+{
+q:"25 + 35 = ?",
+o:["50","60","65","70"],
+a:1,s:"math"
+},
+
+{
+q:"100 चा 25% किती?",
+o:["20","25","30","40"],
+a:1,s:"math"
+},
+
+{
+q:"12 × 8 = ?",
+o:["86","96","108","112"],
+a:1,s:"math"
+},
+
+{
+q:"144 ÷ 12 = ?",
+o:["10","12","14","16"],
+a:1,s:"math"
+},
+
+{
+q:"2 + 8 × 2 = ?",
+o:["20","18","16","12"],
+a:1,s:"math"
+},
+
+{
+q:"एका वस्तूची किंमत ₹500 आहे. 10% सूट दिल्यास किंमत किती?",
+o:["₹450","₹400","₹480","₹490"],
+a:0,s:"math"
+},
+
+{
+q:"1 किलोमध्ये किती ग्रॅम असतात?",
+o:["100","500","1000","1500"],
+a:2,s:"math"
+},
+
+{
+q:"एका आठवड्यात किती दिवस असतात?",
+o:["5","6","7","8"],
+a:2,s:"math"
+},
+
+{
+q:"एका तासात किती मिनिटे असतात?",
+o:["30","45","60","90"],
+a:2,s:"math"
+},
+
+{
+q:"एका मिनिटात किती सेकंद असतात?",
+o:["30","60","90","100"],
+a:1,s:"math"
+},
+
+{
+q:"'घर' या शब्दाचा समानार्थी शब्द कोणता?",
+o:["गृह","वन","रस्ता","शाळा"],
+a:0,s:"marathi"
+},
+
+{
+q:"'मोठा' या शब्दाचा विरुद्धार्थी शब्द कोणता?",
+o:["उंच","लहान","जाड","रुंद"],
+a:1,s:"marathi"
+},
+
+{
+q:"'सुंदर' या शब्दाचा विरुद्धार्थी शब्द कोणता?",
+o:["छान","कुरूप","चांगला","गोड"],
+a:1,s:"marathi"
+},
+
+{
+q:"'सूर्य' या शब्दाचा समानार्थी शब्द कोणता?",
+o:["रवि","चंद्र","पृथ्वी","आकाश"],
+a:0,s:"marathi"
+},
+
+{
+q:"'जल' या शब्दाचा अर्थ काय?",
+o:["वारा","पाणी","आग","माती"],
+a:1,s:"marathi"
+},
+
+{
+q:"'मी शाळेत जातो.' या वाक्यातील क्रियापद कोणते?",
+o:["मी","शाळेत","जातो","या"],
+a:2,s:"marathi"
+},
+
+{
+q:"'राम आंबा खातो.' या वाक्यात कर्ता कोण आहे?",
+o:["राम","आंबा","खातो","या"],
+a:0,s:"marathi"
+},
+
+{
+q:"'मुलगा' या शब्दाचे अनेकवचन कोणते?",
+o:["मुलगी","मुले","मुलगा","मुलांना"],
+a:1,s:"marathi"
+},
+
+{
+q:"'फूल' या शब्दाचे अनेकवचन कोणते?",
+o:["फुले","फुली","फुला","फुलांनी"],
+a:0,s:"marathi"
+},
+
+{
+q:"छत्रपती शिवाजी महाराजांचा जन्म कोणत्या किल्ल्यावर झाला?",
+o:["रायगड","शिवनेरी","प्रतापगड","सिंहगड"],
+a:1,s:"history"
+},
+
+{
+q:"छत्रपती शिवाजी महाराजांचा राज्याभिषेक कोणत्या वर्षी झाला?",
+o:["1664","1674","1680","1659"],
+a:1,s:"history"
+},
+
+{
+q:"रायगड किल्ला कोणत्या जिल्ह्यात आहे?",
+o:["पुणे","रायगड","नाशिक","सातारा"],
+a:1,s:"history"
+},
+
+{
+q:"प्रतापगड किल्ला कोणत्या जिल्ह्यात आहे?",
+o:["सातारा","पुणे","नागपूर","नाशिक"],
+a:0,s:"history"
+},
+
+{
+q:"छत्रपती शिवाजी महाराजांच्या मातोश्रींचे नाव काय?",
+o:["जिजाबाई","ताराबाई","सईबाई","सोयराबाई"],
+a:0,s:"history"
+},
+
+{
+q:"शिवाजी महाराजांचे वडील कोण होते?",
+o:["शहाजी राजे","संभाजी राजे","शहाजीराव होळकर","बाजीराव"],
+a:0,s:"history"
+},
+
+{
+q:"सिंहगडाचे पूर्वीचे नाव काय होते?",
+o:["कोंढाणा","राजगड","तोरणा","पुरंदर"],
+a:0,s:"history"
+},
+
+{
+q:"शिवाजी महाराजांनी जिंकलेला पहिला किल्ला कोणता मानला जातो?",
+o:["तोरणा","रायगड","प्रतापगड","सिंहगड"],
+a:0,s:"history"
+},
+
+{
+q:"अफजलखानाचा वध कुठे झाला?",
+o:["रायगड","प्रतापगड","शिवनेरी","पन्हाळा"],
+a:1,s:"history"
+},
+
+{
+q:"मराठा साम्राज्याचे संस्थापक म्हणून कोणाला ओळखले जाते?",
+o:["बाजीराव","छत्रपती शिवाजी महाराज","संभाजी महाराज","शहाजी राजे"],
+a:1,s:"history"
+}
+
+];
+
+let quizQuestions=[];
+let current=0;
+let score=0;
+let selected=false;
+let timeLeft=600;
+let timerInterval;
+
+function startTest(){
+
+const subject=document.getElementById("subject").value;
+
+if(subject==="all"){
+quizQuestions=[...questions];
+}else{
+quizQuestions=questions.filter(x=>x.s===subject);
+}
+
+quizQuestions.sort(()=>Math.random()-0.5);
+
+quizQuestions=quizQuestions.slice(0,20);
+
+current=0;
+score=0;
+selected=false;
+timeLeft=600;
+
+document.getElementById("startScreen").classList.add("hidden");
+document.getElementById("quizScreen").classList.remove("hidden");
+document.getElementById("resultScreen").classList.add("hidden");
+
+clearInterval(timerInterval);
+
+timerInterval=setInterval(updateTimer,1000);
+
+showQuestion();
+
+}
+
+function updateTimer(){
+
+let minutes=Math.floor(timeLeft/60);
+let seconds=timeLeft%60;
+
+document.getElementById("timer").innerText=
+String(minutes).padStart(2,"0")+":"+
+String(seconds).padStart(2,"0");
+
+if(timeLeft<=0){
+
+clearInterval(timerInterval);
+finishTest();
+
+}
+
+timeLeft--;
+
+}
+
+function showQuestion(){
+
+selected=false;
+
+let q=quizQuestions[current];
+
+document.getElementById("questionNumber").innerText=
+"प्रश्न "+(current+1)+" / "+quizQuestions.length;
+
+document.getElementById("liveScore").innerText=
+"गुण: "+score;
+
+document.getElementById("question").innerText=q.q;
+
+const options=document.getElementById("options");
+
+options.innerHTML="";
+
+q.o.forEach((option,index)=>{
+
+let btn=document.createElement("button");
+
+btn.className="option";
+
+btn.innerText=
+String.fromCharCode(65+index)+") "+option;
+
+btn.onclick=()=>selectAnswer(btn,index);
+
+options.appendChild(btn);
+
+});
+
+document.getElementById("nextBtn").disabled=true;
+
+}
+
+function selectAnswer(button,index){
+
+if(selected)return;
+
+selected=true;
+
+let correct=quizQuestions[current].a;
+
+let all=document.querySelectorAll(".option");
+
+all.forEach((btn,i)=>{
+
+if(i===correct){
+btn.classList.add("correct");
+}
+
+});
+
+if(index===correct){
+
+score++;
+
+}else{
+
+button.classList.add("wrong");
+
+}
+
+document.getElementById("liveScore").innerText=
+"गुण: "+score;
+
+document.getElementById("nextBtn").disabled=false;
+
+}
+
+function nextQuestion(){
+
+current++;
+
+if(current>=quizQuestions.length){
+
+finishTest();
+
+}else{
+
+showQuestion();
+
+}
+
+}
+
+function finishTest(){
+
+clearInterval(timerInterval);
+
+document.getElementById("quizScreen").classList.add("hidden");
+document.getElementById("resultScreen").classList.remove("hidden");
+
+let total=quizQuestions.length;
+let wrong=total-score;
+let percentage=Math.round((score/total)*100);
+
+document.getElementById("finalScore").innerText=
+score+" / "+total;
+
+document.getElementById("totalQuestions").innerText=total;
+document.getElementById("correctAnswers").innerText=score;
+document.getElementById("wrongAnswers").innerText=wrong;
+
+document.getElementById("percentage").innerText=
+percentage+"%";
+
+let message="";
+
+if(percentage>=90){
+message="🏆 उत्कृष्ट! तुमची तयारी खूपच चांगली आहे.";
+}
+else if(percentage>=70){
+message="👏 खूप छान! अजून थोडा सराव करा.";
+}
+else if(percentage>=50){
+message="👍 चांगला प्रयत्न! नियमित सराव करा.";
+}
+else{
+message="📚 अजून सरावाची गरज आहे. पुन्हा टेस्ट द्या.";
+}
+
+document.getElementById("resultMessage").innerText=message;
+
+}
+
+function restartTest(){
+
+document.getElementById("resultScreen").classList.add("hidden");
+document.getElementById("startScreen").classList.remove("hidden");
+
+}
+
+</script>
+
+</body>
+</html><!DOCTYPE html>
+<html lang="mr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>पोलीस भरती MCQ टेस्ट</title>
 <style>
 *{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:#eef2f7;color:#222}
