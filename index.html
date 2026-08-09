@@ -3,111 +3,139 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Police Bharti MCQ Test</title>
-
+<title>पोलीस भरती MCQ टेस्ट</title>
 <style>
-*{box-sizing:border-box}
-
-body{
-margin:0;
-font-family:Arial,sans-serif;
-background:#eef2f7;
-color:#222
-}
-
-header{
-background:#123c69;
-color:white;
-padding:22px 15px;
-text-align:center
-}
-
-header h1{
-margin:0;
-font-size:25px
-}
-
-header p{
-margin:8px 0 0
-}
-
-.container{
-max-width:650px;
-margin:auto;
-padding:15px
-}
-
-.card{
-background:white;
-border-radius:15px;
-padding:20px;
-margin-top:15px;
-box-shadow:0 4px 15px rgba(0,0,0,.1)
-}
-
-select,button{
-width:100%;
-padding:14px;
-border-radius:10px;
-font-size:16px
-}
-
-select{
-border:2px solid #ddd;
-margin:10px 0
-}
-
-button{
-border:none;
-background:#123c69;
-color:white;
-margin-top:10px;
-cursor:pointer
-}
-
-.timer{
-background:#ffe8e8;
-color:#c00;
-padding:10px;
-border-radius:10px;
-text-align:center;
-font-size:18px;
-font-weight:bold;
-margin-bottom:15px
-}
-
-.progress{
-display:flex;
-justify-content:space-between;
-margin-bottom:15px;
-font-weight:bold
-}
-
-.question{
-font-size:19px;
-font-weight:bold;
-line-height:1.5;
-margin-bottom:15px
-}
-
-.option{
-background:white;
-color:#222;
-border:2px solid #ddd;
-text-align:left
-}
-
-.option:hover{
-background:#f0f6ff
-}
-
-.correct{
-background:#c9f7c5!important;
-border-color:green!important
-}
-
-.wrong{
-background:#ffd0d0!important;
+*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:#eef2f7;color:#222}
+header{background:#123c69;color:#fff;text-align:center;padding:18px 10px}header h1{margin:0;font-size:24px}
+.container{max-width:700px;margin:auto;padding:14px}.card{background:#fff;border-radius:15px;padding:18px;margin:12px 0;box-shadow:0 3px 12px #0002}
+button{width:100%;padding:13px;border:0;border-radius:10px;background:#123c69;color:#fff;font-size:17px;margin-top:12px}
+.option{background:#f5f7fa;color:#222;border:2px solid #ddd;text-align:left;margin:8px 0}
+.option:hover{background:#eaf2ff}.correct{background:#d8f5dc!important;border-color:green!important}.wrong{background:#ffdede!important;border-color:red!important}
+.hidden{display:none}.progress{font-weight:bold;margin:10px 0}.timer{text-align:center;background:#fff0c2;padding:10px;border-radius:10px;font-weight:bold}
+.score{text-align:center;font-size:40px;font-weight:bold;color:#123c69}.result{text-align:center}
+.restart{background:#198754}
+</style>
+</head>
+<body>
+<header><h1>📚 पोलीस भरती MCQ टेस्ट</h1><div>100 प्रश्न • 4 पर्याय • Score</div></header>
+<div class="container">
+<div id="start" class="card"><h2>📝 100 प्रश्नांची टेस्ट</h2><p>प्रत्येक प्रश्नाला 1 गुण.</p><button onclick="startTest()">▶️ टेस्ट सुरू करा</button></div>
+<div id="quiz" class="hidden"><div class="timer">⏱️ वेळ: <span id="time">30:00</span></div><div class="progress" id="progress"></div>
+<div class="card"><h2 id="q"></h2><div id="options"></div><button id="next" onclick="nextQuestion()" disabled>पुढील प्रश्न ➡️</button></div></div>
+<div id="result" class="card hidden result"><h2>🎉 टेस्ट पूर्ण!</h2><div class="score" id="score"></div><p id="message"></p><p id="details"></p><button class="restart" onclick="location.reload()">🔄 पुन्हा टेस्ट द्या</button></div>
+</div>
+<script>
+const questions = [
+["महाराष्ट्राची राजधानी कोणती?","मुंबई","पुणे","नागपूर","नाशिक","A"],
+["भारताची राजधानी कोणती?","मुंबई","नवी दिल्ली","कोलकाता","चेन्नई","B"],
+["भारतीय संविधान कधी लागू झाले?","15 ऑगस्ट 1947","26 जानेवारी 1950","26 नोव्हेंबर 1949","2 ऑक्टोबर 1950","B"],
+["भारतीय संविधान दिन कधी साजरा केला जातो?","15 ऑगस्ट","26 जानेवारी","26 नोव्हेंबर","2 ऑक्टोबर","C"],
+["भारताचा राष्ट्रीय प्राणी कोणता?","सिंह","वाघ","हत्ती","मोर","B"],
+["भारताचा राष्ट्रीय पक्षी कोणता?","गरुड","मोर","कबूतर","हंस","B"],
+["भारताचे राष्ट्रीय फूल कोणते?","गुलाब","कमळ","जाई","सूर्यफूल","B"],
+["महाराष्ट्राचा राज्य प्राणी कोणता?","शेकरू","वाघ","सिंह","हरिण","A"],
+["महाराष्ट्राचा राज्य पक्षी कोणता?","मोर","हरियाल","गरुड","कोकीळ","B"],
+["महाराष्ट्र दिन कधी साजरा केला जातो?","1 मे","15 ऑगस्ट","26 जानेवारी","1 जानेवारी","A"],
+["छत्रपती शिवाजी महाराजांचा जन्म कोणत्या किल्ल्यावर झाला?","रायगड","शिवनेरी","प्रतापगड","सिंहगड","B"],
+["शिवाजी महाराजांचा राज्याभिषेक कुठे झाला?","रायगड","शिवनेरी","प्रतापगड","पन्हाळा","A"],
+["भारतीय राष्ट्रगीताचे नाव काय?","वंदे मातरम्","जन गण मन","सारे जहाँ से अच्छा","जय महाराष्ट्र","B"],
+["भारतीय राष्ट्रगीताचे लेखक कोण?","रवींद्रनाथ टागोर","बंकिमचंद्र चट्टोपाध्याय","महात्मा गांधी","लोकमान्य टिळक","A"],
+["वंदे मातरम् चे लेखक कोण?","रवींद्रनाथ टागोर","बंकिमचंद्र चट्टोपाध्याय","सावरकर","कुसुमाग्रज","B"],
+["भारताचा राष्ट्रीय खेळ म्हणून अधिकृतपणे कोणताही खेळ घोषित आहे का?","हो, हॉकी","हो, क्रिकेट","हो, कबड्डी","नाही","D"],
+["महाराष्ट्रातील सर्वात मोठी नदी कोणती?","गोदावरी","कृष्णा","भीमा","तापी","A"],
+["गोदावरी नदीचा उगम कुठे होतो?","महाबळेश्वर","त्र्यंबकेश्वर","लोणावळा","माथेरान","B"],
+["महाराष्ट्रातील सर्वात उंच शिखर कोणते?","कळसूबाई","हरिश्चंद्रगड","तोरणा","साल्हेर","A"],
+["महाराष्ट्रातील क्षेत्रफळाने सर्वात मोठा जिल्हा कोणता?","पुणे","नाशिक","अहमदनगर","नागपूर","C"],
+["15 + 25 = ?","30","35","40","45","C"],
+["48 ÷ 6 = ?","6","8","9","12","B"],
+["12 × 8 = ?","86","96","108","112","B"],
+["100 च्या 25% किती?","20","25","30","40","B"],
+["200 च्या 15% किती?","20","25","30","35","C"],
+["3, 6, 9, 12, ?","14","15","16","18","B"],
+["2, 4, 8, 16, ?","20","24","30","32","D"],
+["144 चे वर्गमूळ किती?","10","11","12","14","C"],
+["17 चा वर्ग किती?","279","289","299","309","B"],
+["एका डझनमध्ये किती वस्तू असतात?","10","12","14","16","B"],
+["1 किलोमीटरमध्ये किती मीटर असतात?","100","500","1000","1500","C"],
+["1 तासात किती मिनिटे असतात?","30","45","60","90","C"],
+["2 तास 30 मिनिटे = किती मिनिटे?","120","130","150","180","C"],
+["एका आठवड्यात किती दिवस असतात?","5","6","7","8","C"],
+["लीप वर्षात किती दिवस असतात?","364","365","366","367","C"],
+["जर आज सोमवार असेल तर 3 दिवसांनी कोणता वार असेल?","मंगळवार","बुधवार","गुरुवार","शुक्रवार","C"],
+["एका संख्येचा 1/2 भाग 25 आहे, तर संख्या किती?","40","50","60","75","B"],
+["80 चा 3/4 भाग किती?","50","60","70","75","B"],
+["10, 20, 30, 40 यांची सरासरी किती?","20","25","30","35","B"],
+["एका वस्तूची किंमत ₹500 आहे. 10% सूट किती?","₹40","₹50","₹60","₹70","B"],
+["A, B, C, D, ?","E","F","G","H","A"],
+["मराठी वर्णमालेतील पहिले अक्षर कोणते?","अ","आ","इ","ई","A"],
+["‘जल’ या शब्दाचा समानार्थी शब्द कोणता?","आकाश","पाणी","वारा","अग्नी","B"],
+["‘मोठा’ या शब्दाचा विरुद्धार्थी शब्द कोणता?","लहान","उंच","जाड","जवळ","A"],
+["‘सूर्य’चा समानार्थी शब्द कोणता?","रवि","चंद्र","मेघ","पवन","A"],
+["‘घर’ या शब्दाचे अनेकवचन काय?","घरे","घरी","घराचा","घरीं","A"],
+["‘तो शाळेत जातो’ या वाक्यात कर्ता कोण?","शाळेत","जातो","तो","वाक्य","C"],
+["‘सुंदर’ हा कोणता शब्दप्रकार आहे?","नाम","सर्वनाम","विशेषण","क्रियापद","C"],
+["‘धावणे’ हा कोणता शब्दप्रकार आहे?","नाम","क्रियापद","विशेषण","उभयान्वयी अव्यय","B"],
+["‘मी’ हे कोणते सर्वनाम आहे?","पुरुषवाचक","दर्शक","प्रश्नार्थक","संबंधी","A"],
+["‘राम आणि श्याम’ मध्ये ‘आणि’ कोणता शब्द आहे?","नाम","क्रियापद","उभयान्वयी अव्यय","विशेषण","C"],
+["पृथ्वीचा उपग्रह कोणता?","सूर्य","चंद्र","मंगळ","शुक्र","B"],
+["सूर्याजवळचा ग्रह कोणता?","पृथ्वी","मंगळ","बुध","शुक्र","C"],
+["पृथ्वीवर जीवनासाठी आवश्यक वायू कोणता?","ऑक्सिजन","हेलियम","निऑन","हायड्रोजन","A"],
+["पाण्याचे रासायनिक सूत्र काय?","CO2","O2","H2O","NaCl","C"],
+["मानवी शरीरातील रक्त पंप करणारा अवयव कोणता?","फुफ्फुस","हृदय","यकृत","मूत्रपिंड","B"],
+["मानवी शरीराचे सामान्य तापमान साधारण किती?","35°C","37°C","40°C","42°C","B"],
+["वनस्पती प्रकाशसंश्लेषणासाठी कोणता वायू वापरतात?","ऑक्सिजन","नायट्रोजन","कार्बन डायऑक्साइड","हेलियम","C"],
+["लोखंडाचे रासायनिक चिन्ह काय?","Ir","Fe","In","F","B"],
+["ऑक्सिजनचे रासायनिक चिन्ह काय?","O","Ox","Og","On","A"],
+["पाण्याचा उकळबिंदू समुद्रसपाटीवर किती असतो?","50°C","75°C","100°C","120°C","C"],
+["भारतीय रिझर्व्ह बँकेचे संक्षिप्त रूप काय?","SBI","RBI","SEBI","LIC","B"],
+["भारताचे चलन कोणते?","डॉलर","रुपया","येन","पाउंड","B"],
+["भारतातील सर्वोच्च न्यायालय कुठे आहे?","मुंबई","नवी दिल्ली","पुणे","लखनऊ","B"],
+["लोकसभेचा कार्यकाळ सामान्यतः किती वर्षांचा असतो?","3","4","5","6","C"],
+["राज्यसभेचे सदस्य किती वर्षांसाठी निवडले जातात?","4","5","6","7","C"],
+["भारतामध्ये मतदानाचे किमान वय किती आहे?","16","18","21","25","B"],
+["मूलभूत अधिकार संविधानाच्या कोणत्या भागात आहेत?","भाग I","भाग II","भाग III","भाग IV","C"],
+["भारताचा पहिला राष्ट्रपती कोण होता?","डॉ. राजेंद्र प्रसाद","डॉ. राधाकृष्णन","जवाहरलाल नेहरू","सरदार पटेल","A"],
+["भारताचे पहिले पंतप्रधान कोण होते?","महात्मा गांधी","जवाहरलाल नेहरू","सरदार पटेल","लालबहादूर शास्त्री","B"],
+["‘जय जवान जय किसान’ घोषणा कोणी दिली?","जवाहरलाल नेहरू","लालबहादूर शास्त्री","इंदिरा गांधी","सरदार पटेल","B"],
+["भारतीय स्वातंत्र्य दिन कधी साजरा केला जातो?","26 जानेवारी","15 ऑगस्ट","1 मे","2 ऑक्टोबर","B"],
+["प्रजासत्ताक दिन कधी साजरा केला जातो?","15 ऑगस्ट","26 जानेवारी","1 मे","14 एप्रिल","B"],
+["महात्मा गांधी जयंती कधी असते?","2 ऑक्टोबर","14 एप्रिल","15 ऑगस्ट","26 जानेवारी","A"],
+["भारतीय पोलीस आपत्कालीन क्रमांक कोणता?","100","101","102","108","A"],
+["अग्निशमन सेवेचा पारंपरिक आपत्कालीन क्रमांक कोणता?","100","101","102","108","B"],
+["रुग्णवाहिका सेवेसाठी भारतातील एकत्रित आपत्कालीन क्रमांक कोणता?","108","101","100","139","A"],
+["रेल्वे तिकीटासाठी भारतीय रेल्वेचा संक्षिप्त उल्लेख काय?","IR","IT","ISRO","DRDO","A"],
+["ISRO चे पूर्ण रूप काय?","Indian Space Research Organisation","Indian Science Research Office","International Space Research Organisation","Indian Satellite Research Office","A"],
+["DRDO चे पूर्ण रूप काय?","Defence Research and Development Organisation","Department of Rail Development Office","Defence Railway Development Organisation","Digital Research Development Organisation","A"],
+["CPU चे पूर्ण रूप काय?","Central Processing Unit","Computer Personal Unit","Central Program Utility","Control Processing User","A"],
+["WWW चे पूर्ण रूप काय?","World Wide Web","World Web Window","Wide World Web","Web World Wide","A"],
+["ई-मेलचा उपयोग कशासाठी होतो?","फक्त गेमसाठी","इलेक्ट्रॉनिक संदेश पाठवण्यासाठी","फोटो छापण्यासाठी","वीज मोजण्यासाठी","B"],
+["भारताचा राष्ट्रीय ध्वज किती रंगांचा आहे?","2","3","4","5","B"],
+["राष्ट्रीय ध्वजातील अशोकचक्रात किती आरे आहेत?","20","22","24","26","C"],
+["‘सत्यमेव जयते’ कुठून घेतले आहे?","उपनिषद","रामायण","महाभारत","गीता","A"],
+["भारतीय संविधानाचे शिल्पकार म्हणून कोणाला ओळखले जाते?","डॉ. बाबासाहेब आंबेडकर","महात्मा गांधी","नेहरू","टिळक","A"],
+["डॉ. बाबासाहेब आंबेडकर जयंती कधी साजरी केली जाते?","14 एप्रिल","15 ऑगस्ट","26 जानेवारी","1 मे","A"],
+["महाराष्ट्रातील प्रसिद्ध किल्ला रायगड कोणत्या पर्वतरांगांत आहे?","सह्याद्री","हिमालय","अरावली","सतपुडा","A"],
+["‘केसरी’ वृत्तपत्राशी कोण संबंधित होते?","लोकमान्य टिळक","महात्मा गांधी","डॉ. आंबेडकर","सावरकर","A"],
+["लोकमान्य टिळकांनी कोणता उत्सव लोकप्रिय केला?","गणेशोत्सव","होळी","दिवाळी","पोळा","A"],
+["सत्यशोधक समाजाची स्थापना कोणी केली?","महात्मा फुले","आगरकर","टिळक","शाहू महाराज","A"],
+["सावित्रीबाई फुले यांचे कार्य मुख्यतः कशाशी संबंधित होते?","महिला शिक्षण","अंतराळ संशोधन","रेल्वे","क्रीडा","A"],
+["महाराष्ट्रातील प्रसिद्ध अजिंठा लेणी कोणत्या जिल्ह्यात आहेत?","औरंगाबाद/छत्रपती संभाजीनगर","पुणे","नाशिक","सातारा","A"],
+["एलोरा लेणी कोणत्या जिल्ह्यात आहेत?","छत्रपती संभाजीनगर","नागपूर","कोल्हापूर","सोलापूर","A"],
+["भारताचा सर्वात मोठा महासागर कोणता?","हिंद महासागर","प्रशांत महासागर","अटलांटिक महासागर","आर्क्टिक महासागर","B"],
+["जगातील सर्वात मोठा खंड कोणता?","आफ्रिका","आशिया","युरोप","ऑस्ट्रेलिया","B"],
+["जगातील सर्वात मोठा महासागर कोणता?","हिंद","अटलांटिक","प्रशांत","आर्क्टिक","C"],
+["भारताच्या पश्चिमेस कोणता समुद्र आहे?","बंगालचा उपसागर","अरबी समुद्र","हिंद महासागर","कॅस्पियन समुद्र","B"],
+["भारताच्या पूर्वेस कोणता उपसागर आहे?","अरबी समुद्र","बंगालचा उपसागर","पर्शियन आखात","लाल समुद्र","B"]
+];
+let i=0,score=0,answered=false,time=1800,timer;
+function startTest(){document.getElementById('start').classList.add('hidden');document.getElementById('quiz').classList.remove('hidden');timer=setInterval(()=>{time--;let m=Math.floor(time/60),s=time%60;document.getElementById('time').textContent=m+':'+String(s).padStart(2,'0');if(time<=0)finish()},1000);show()}
+function show(){answered=false;document.getElementById('next').disabled=true;let x=questions[i];document.getElementById('progress').textContent='प्रश्न '+(i+1)+' / '+questions.length;document.getElementById('q').textContent=(i+1)+'. '+x[0];let box=document.getElementById('options');box.innerHTML='';['A','B','C','D'].forEach((l,n)=>{let b=document.createElement('button');b.className='option';b.textContent=l+'. '+x[n+1];b.onclick=()=>answer(b,l);box.appendChild(b)})}
+function answer(btn,l){if(answered)return;answered=true;let correct=questions[i][5];if(l===correct){score++;btn.classList.add('correct')}else{btn.classList.add('wrong');[...document.querySelectorAll('.option')].forEach(b=>{if(b.textContent.startsWith(correct+'.'))b.classList.add('correct')})}document.getElementById('next').disabled=false;document.getElementById('next').textContent=i===questions.length-1?'निकाल पहा 🏆':'पुढील प्रश्न ➡️'}
+function nextQuestion(){if(!answered)return;if(i<questions.length-1){i++;show()}else finish()}
+function finish(){clearInterval(timer);document.getElementById('quiz').classList.add('hidden');document.getElementById('result').classList.remove('hidden');let p=Math.round(score/questions.length*100);document.getElementById('score').textContent=score+' / '+questions.length;document.getElementById('details').textContent='टक्केवारी: '+p+'%';document.getElementById('message').textContent=p>=80?'🏆 उत्कृष्ट!':p>=60?'👏 चांगले! अजून सराव करा.':'📚 आणखी सराव करा.'}
+</script>
+</body>
+</html>background:#ffd0d0!important;
 border-color:red!important
 }
 
